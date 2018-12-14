@@ -1,0 +1,7 @@
+1.麻省理工学院公开课:算法导论(在线)：http://edu.51cto.com/lesson/id-2236.html
+语言是英文的，不过字幕已经被翻译为中文。
+2.数据结构经典疑难问题视频讲解（在线）：http://edu.51cto.com/course/course_id-158.html
+这个主要是描述问题，然后如何用程序实现，没有巧妙的算法，但是解决问题的方法还可以。
+3.清华大学《数据结构与算法》课程（严蔚敏）（在线）：http://edu.51cto.com/lesson/id-4133.html
+4.郝斌数据结构：下载地址参见：http://www.52pojie.cn/thread-130075-1-1.html
+书籍使用的是严蔚敏的。

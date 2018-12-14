@@ -1,0 +1,150 @@
+﻿
+2018-03-20
+root/rootpa123
+weblogic/weblogic
+
+项目结构:
+
+------------------------------------------------------------------------------
+2018-03-21
+登录服务指令:ssh 名@IP (如ssh weblogic@168.40.5.44)
+
+su - 名 如: su - weblogic 注:切换用户
+
+查看实时日志:/home/weblogic/Oracle/Middleware/user_projects/domains/base_domain/nohup.out
+
+查看项目日志:/home/weblogic/Oracle/Middleware/user_projects/domains/logs/...
+实时滚动打印日志：tail -f 文件名
+
+
+停服务:Oracle/Middleware/user_projects/domains/base_domain/bin/stopWeblogic.sh
+指令:./stopWeblogic.sh
+
+启服务:Oracle/Middleware/user_projects/domains/base_domain/startWeblogic.sh
+指令:(nohup) ./startWeblogic.sh &  
+	注:(nohup打印日志到nohup.out文件,可有可无nohup)
+
+浏览器部署项目:http://IP:7001/console
+浏览器启动项目:http://IP:7001/项目名
+
+指令操作:
+	
+	查看所有:ll
+	返回上一级:cd ..
+	返回第一层:cd ~
+
+	查看文档:vi(vim) 文档名字    
+	对文档的操作:
+		看行列数:Ctrl+g
+		翻页:Ctrl+f(后),Ctrl+b(前),Ctrl+u(后),Ctrl+d(前)
+		修改:i
+		保存: shift+: wq! 回车 (write quit)
+		不保存: shift+: q! 回车 (quit)
+
+	查看进程:ps -u|grep 当前服务名
+	
+	新建目录:mkdir 包名
+	
+	删除:rm -rf 包名
+
+	解压(war,zip):jar -xvf war包名
+	
+	压缩(war,zip):zip -xvf 包名
+	
+	
+
+	查看当前目录:pwd
+
+	杀进程:kill -9 端口号
+
+	清屏:clear
+	
+	返回指令窗口:Ctrl+c
+	
+	复制文件:cp name 目录
+	
+	移动文件: mv name 目录
+	
+	修改文件名:mv name rename
+	
+	进入oracle:sqlplus / as sysdba
+	
+	
+	
+-----------------------------------------------------------------------------------
+
+20180322
+压缩
+
+tar -cvf jpg.tar *.jpg //将目录里所有jpg文件打包成jpg.tar 
+
+tar -czf jpg.tar.gz *.jpg   //将目录里所有jpg文件打包成jpg.tar后，并且将其用gzip压缩，生成一个gzip压缩过的包，命名为jpg.tar.gz
+
+tar -cjf jpg.tar.bz2 *.jpg //将目录里所有jpg文件打包成jpg.tar后，并且将其用bzip2压缩，生成一个bzip2压缩过的包，命名为jpg.tar.bz2
+
+tar -cZf jpg.tar.Z *.jpg   //将目录里所有jpg文件打包成jpg.tar后，并且将其用compress压缩，生成一个umcompress压缩过的包，命名为jpg.tar.Z
+
+rar a jpg.rar *.jpg //rar格式的压缩，需要先下载rar for linux
+
+zip jpg.zip *.jpg //zip格式的压缩，需要先下载zip for linux
+
+解压
+
+tar -xvf file.tar //解压 tar包
+
+tar -xzvf file.tar.gz //解压tar.gz
+
+tar -xjvf file.tar.bz2   //解压 tar.bz2
+
+tar -xZvf file.tar.Z   //解压tar.Z
+
+unrar e file.rar //解压rar
+
+unzip file.zip //解压zip
+
+总结:
+
+1、*.tar 用 tar -xvf 解压
+
+2、*.gz 用 gzip -d或者gunzip 解压
+
+3、*.tar.gz和*.tgz 用 tar -xzf 解压
+
+4、*.bz2 用 bzip2 -d或者用bunzip2 解压
+
+5、*.tar.bz2用tar -xjf 解压
+
+6、*.Z 用 uncompress 解压
+
+7、*.tar.Z 用tar -xZf 解压
+
+8、*.rar 用 unrar e解压
+
+9、*.zip 用 unzip 解压
+----------------------------------------------------------------------------------
+Linux下创建数据库
+
+在命令窗口输入:
+ 
+[oracle@cap4jtest5] $ sqlplus / as sysdba
+	
+创建tablespace
+ create tablespace "dykcib" datafile '/home/oracle/dykcib.ora' size 50M autoextend on next 10M maxsize 100M;
+SQL> create tablespace gshl datafile '/home/oracle/gshltest.ora' size 50M autoextend on next 10M maxsize 100M;(注意:window下是双引号,Linux下是单引号)
+
+创建用户
+SQL>create user gshl identified by gshl123 account unlock;
+
+为用户授权
+SQL>grant create user , drop user,alter user,create any view,drop any view,exp_full_database,imp_full_database,dba,connect,resource,create session to gshl;
+
+为用户指定默认空间
+SQL>alter user gshl default tablespace gshl;
+
+退出sqlplus
+SQL>exit
+
+到用户下
+[oracle@cap4jtest5] $ imp gshl(用户名)/gshl123(密码) fromuser=gshl(dmp从这个用户导出来) touser=gshl(将dmp文件数据导入到这个用户) file=/sy/gshl.dmp;在Linux下不加引号
+
+完成!

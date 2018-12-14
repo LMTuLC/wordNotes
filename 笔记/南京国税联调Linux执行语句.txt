@@ -1,0 +1,2 @@
+#!/bin/bash
+echo '<?xml version='1.0' encoding='UTF-8'?><tiripPackage><Transaction><taxRequest><taxNum>111111</taxNum><dataType>01</dataType></taxRequest></transaction></tiripPackage>'|curl -X POST -H 'Content-type:test/xml;UTF-8' -d @- http:168.40.40.76:8100/zx_xybk/xingyeAction.action

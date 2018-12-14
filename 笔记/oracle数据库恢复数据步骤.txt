@@ -1,0 +1,21 @@
+1.样例表test_171205 
+
+2.delete test_171205 where test_id = '001'; --误删除了其中一条数据
+
+3.select sql_text,first_load_time,last_load_time from V$SQL where sql_text like '%delete test_171205%';--查看自己执行过的sql和最后执行时间，这里查到最后执行时间是2017-12-05 21:20:10；
+
+4.create table test_171205_tmp as select * from test_171205 as of timestamp to_timestamp('2017-12-05 21:20:11','yyyy-mm-dd hh24:mi:ss');--创建一个临时表，用来保存2017-12-05 21:20:10分之前的数据
+
+5.drop table test_171205;--删除原来的表
+
+6.alter table test_171205_tmp rename to test_171205;--更改临时表的表名
+
+
+
+建序列
+CREATE SEQUENCE sequence_emp  --序列名
+INCREMENT BY 1   -- 每次加几个  
+START WITH 1       -- 从1开始计数  
+NOMAXVALUE        -- 不设置最大值  
+NOCYCLE               -- 一直累加，不循环  
+CACHE 10;

@@ -1,0 +1,82 @@
+导出:
+exp system/manager@ORACLE file=c:\daochu.dmp full=y
+或者
+exp test/test@10.10.10.10:1521/orcl file=E:\aaa.dmp
+
+导入:
+imp kang/123456@localhost/ORACLE file="C:\daochu.dmp" full=y ignore=y
+
+导出指定表:
+(注:cmd括号可以,Linux不加括号)
+exp user1/pwd@10.10.10.10:1521/orcl file=c:\temp\exp.dmp tables=(table1, table2)
+
+dmp文件是作为oracle导入和导出表使用的文件格式
+dmp文件导出
+dmp文件导出用的比较多的一般是三种，他们分别是：
+1.导出整个数据库实例下的所有数据
+2.导出指定用户的所有表
+3.导出指定表。
+
+打开命令行：
+1，将数据库ORACLE完全导出,用户名system密码manager 导出到c:\daochu.dmp中
+exp system/manager@ORACLE file=c:\daochu.dmp full=y
+或 exp  test/test@10.10.10.10:1521/orcl file=E:\aaa.dmp  
+2，将数据库中RFD用户与,JYZGCX用户的表导出
+exp system/manager@ORACLE file=d:\daochu.dmp   owner=(RFD,JYZGCX)
+3，将数据库中的表T_USER、T_ROLE导出
+exp JYZGCX/JYZGCX@ORACLE file= d:\data\newsmgnt.dmp tables=(T_USER,T_ROLE)
+上面的system为用户名，manager为密码，ORACLE为数据库实例名，其实不一定非的用system用户，只要是拥有管理员权限的用户都可以。
+
+
+
+dmp文件导入
+
+1，打开“开始”-->输入cmd—> sqlplus /nolog；
+2，输入 conn / as sysdba管理员账户登录；
+3，需要创建表空间，如果我们知道需要导入的数据库的表空间直接创建就可以，
+如果不不知道，也没有关系，我们可以用txt打开dmp文件，使用快捷键ctrl+F，查找tablespace，
+就可以找到这个dmp文件所对应数据库的表空间，然后创建我们找到的表空间就可以；
+4，打开“开始”-->输入cmd(注意：这里是cmd窗口，不是sqlplus窗口！！！)，输入以下语句：
+“imp kang/123456@localhost/ORACLE file="C:\daochu.dmp" full=y ignore=y”
+
+上述语句说明如下:
+kang是创建的登录数据库用户名；
+123456是登录数据库的密码；
+localhost：代表当前数据库的地址是本机，如果是远程导入，替换成对应的ip地址就行
+ORACLE：是实例名称
+file：后面的是你当前dmp文件存放的路径
+full=y，这个貌似是全部
+ignore=y，忽略一些错误
+ 
+
+附：
+
+imp导入dmp文件时
+
+出现无法创建initial区,
+或者如果在导入数据时表空间就占满的话，会报错 
+“无法分配超出 n 的 MINEXTENTS”
+
+解决办法
+1.找出该表空间的数据文件路径
+select tablespace_name,file_name,autoextensible from dba_data_files;
+
+2.查看是否自动延伸,如果为NO
+alter database datafile 'D:\ORACLE\WORKSPACE\GSHL.ORA' autoextend on; 
+
+3.修改大小
+alter database datafile 'D:\ORACLE\WORKSPACE\GSHL.ORA' resize 1024M;
+
+
+exp导出dmp文件时
+
+出现  EXP-00003: 未找到 段(0,0)的存储定义
+这个问题出现是在   重新安装了一下 oracle 客户端后
+
+参考解决方法：
+select 'alter table'||table_name||'allocate extent;' from 
+user_tables where num_rows=0 or num_rows is null;
+将这条语句执行出的的信息都执行一遍试试
+
+alter system set  deferred_segment_creation = false;
+把空表导出参数修改下

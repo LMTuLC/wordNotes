@@ -1,0 +1,137 @@
+java日志的级别:
+log4j是apache基金会的一个项目,日志记录器(Logger)是日志处理的核心组件,log4j具有7种级别(Level).
+
+DEBUG Level: 指出细粒度信息事件对调试应用程序是非常有帮助的,就是输出debug的信息.
+INFO level: 表明消息在粗粒度级别上突出强调应用程序的运行过程,就是输出提示信息.
+WARN level: 表明会出现潜在错误的情形,就是显示警告信息.
+ERROR level: 指出虽然发生错误事件,但仍然不影响系统的继续运行.就是显示错误信息.
+FATAL level: 指出每个严重的错误事件将会导致应用程序的退出.
+ALL level: 是最低等级的,用于打开所有日志记录.
+OFF level: 是最高等级的,用于关闭所有日志记录.
+
+
+一共分为五个级别：DEBUG、INFO、WARN、ERROR和FATAL。这五个级别是有顺序的，DEBUG < INFO < WARN < ERROR < FATAL，明白这一点很重要，这里Log4j有一个规则：假设设置了级别为P，如果发生了一个级别Q比P高，则可以启动，否则屏蔽掉。
+DEBUG: 这个级别最低的东东，一般的来说，在系统实际运行过程中，一般都是不输出的。因此这个级别的信息，可以随意的使用，任何觉得有利于在调试时更详细的了解系统运行状态的东东，比如变量的值等等，都输出来看看也无妨。
+INFO：这个应该用来反馈系统的当前状态给最终用户的，所以，在这里输出的信息，应该对最终用户具有实际意义，也就是最终用户要能够看得明白是什么意思才行。从某种角度上说，Info 输出的信息可以看作是软件产品的一部分（就像那些交互界面上的文字一样），所以需要谨慎对待，不可随便。
+WARN、ERROR和FATAL：警告、错误、严重错误，这三者应该都在系统运行时检测到了一个不正常的状态，他们之间的区别，要区分还真不是那么简单的事情。我大致是这样区分的：
+所谓警告，应该是这个时候进行一些修复性的工作，应该还可以把系统恢复到正常状态中来，系统应该可以继续运行下去。
+所谓错误，就是说可以进行一些修复性的工作，但无法确定系统会正常的工作下去，系统在以后的某个阶段，很可能会因为当前的这个问题，导致一个无法修复的错误（例如宕机），但也可能一直工作到停止也不出现严重问题。
+所谓Fatal，那就是相当严重的了，可以肯定这种错误已经无法修复，并且如果系统继续运行下去的话，可以肯定必然会越来越乱。这时候采取的最好的措施不是试图将系统状态恢复到正常，而是尽可能地保留系统有效数据并停止运行。
+也就是说，选择 Warn、Error、Fatal 中的具体哪一个，是根据当前的这个问题对以后可能产生的影响而定的，如果对以后基本没什么影响，则警告之，如果肯定是以后要出严重问题的了，则Fatal之，拿不准会怎么样，则 Error 之。
+
+log4j建议只使用五个级别,级别顺序(由低到高): DEBUG < INFO < WARN < ERROR < FATAL
+
+windows下控制台效率比较差,输出的多了,非常影响服务器性能.
+调试程序用debug或更低的优先级,这样开发的时候可以尽量输出,方便调试.
+正式部署之后,可以提高日志的级别,只输出关键信息.
+
+
+日志记录器（Logger）的行为是分等级的。如下表所示：
+分为OFF、FATAL、ERROR、WARN、INFO、DEBUG、TRACE、ALL或者您定义的级别。Log4j建议只使用四个级别，优先级从高到低分别是ERROR、WARN、INFO、DEBUG。通过在这里定义的级别，您可以控制到应用程序中相应级别的日志信息的开关。比如在这里定义了INFO级别，则应用程序中所有DEBUG级别的日志信息将不被打印出来。程序会打印高于或等于所设置级别的日志，设置的日志等级越高，打印出来的日志就越少。如果设置级别为INFO，则优先级高于等于INFO级别（如：INFO、WARN、ERROR）的日志信息将可以被输出,小于该级别的如DEBUG将不会被输出。
+
+1.1相关英文详解
+ log:日志  debug:调试 error:错误 warn:警告, 提醒 info:消息
+1.2 什么是log4j？为什么要有log4j?
+ log4j定义:log4j是一个流行、优秀的日志记录工具，它能够以各种灵活的方法输出日志信息；
+ 为什么要用log4j：在程序发生错误时，我们希望可以以文件的形式保存这此异常信息，以便日后查看处理优化程序，
+ 就可以用到日志记录，现流行最优秀的一款：log4j，它是开源的，且方便易用;
+1.3如何使用log4j记录程序发后的异常日志信息？
+    (1). 下载log4j的jar包.    log4j-1.2.15.jar
+    (2). 请将jar包粘贴到工程中.
+    (3). 导入jar包:工程名,右键--properties--java build path--libraries--add jars……
+         第二步可以不执行，在第三步中工程名,右键--properties--java build path--libraries--add External jars……即可
+  　　区别：add jars……是添加工程内jar包，add External jars……则不限制于包内，用于jar包未放置于工程内；
+  　　建议执行第二步,实现工程、jar包一体化，避免出现未知的异常
+    (4). 新建一个log4j.properties:src--右键--new--file--命名log4j.properties
+    (5). 配置log4j.properties:
+　　 ### 设置优先级别、以及输出源 stdout输出到控制台,file保存到文件###
+ 　　log4j.rootLogger=debug, stdout, file
+ 　　### 把日志信息输出到控制台 ###
+ 　　log4j.appender.stdout=org.apache.log4j.ConsoleAppender
+ 　　log4j.appender.stdout.Target=System.out
+ 　　log4j.appender.stdout.layout=org.apache.log4j.PatternLayout
+ 　　log4j.appender.stdout.layout.ConversionPattern=%d{yyyy-MM-dd HH:mm:ss} %l %m%n
+
+ 　　### 把日志信息输出到文件：accp.log ###
+ 　　log4j.appender.file=org.apache.log4j.FileAppender
+ 　　log4j.appender.file.File=accp.log
+ 　　log4j.appender.file.layout=org.apache.log4j.PatternLayout
+ 　　log4j.appender.file.layout.ConversionPattern=%d{yyyy-MM-dd HH:mm:ss}  %l  %m%n
+    (6).详解配置：
+ 　　log4j.appender.stdout=org.apache.log4j.ConsoleAppender：添加到控制台 
+ 　　log4j.appender.stdout.Target=System.out：方式为输出  
+ 　　log4j.appender.stdout.layout=org.apache.log4j.PatternLayout：信息布局方式为自定义
+ 　　log4j.appender.stdout.layout.ConversionPattern=%d{yyyy-MM-dd HH:mm:ss} %l %m%n
+ 　　布局方式:布局方式：yyyy-年mm-月dd-天hh-小时mm-分钟ss-秒钟 %l:具体异常代码行数%m:异常信息%n:信息换行
+    (7)优先级:  
+        优先级从高到低分别是ERROR、WARN、INFO、DEBUG
+    (8).总结:
+ 　　　　a:配置文件中不能包含中文(注释中文也不可)，因为配置文件保存标准为:"ISO-8859-1"；
+ 　　　　b:log4j.rootLogger=debug, stdout, file中的debug可替换为ERROR、WARN、INFO、DEBUG 
+ 　　　　c:根据需求设置级别,如设置为debug，则会忽略比它级别低的所有异常
+ 　　　　d:log4j.rootLogger=debug, stdout, file中的stdout, file可选其一
+1.4实例说明:
+ 需求：需求：计算类（compute）要求用户输入二个数执行相除并保存结果用异常类进行处理和使用log4j记录异常信息
+代码实现：
+package com.t97.compute;
+import java.util.InputMismatchException;
+import java.util.Scanner;
+import org.apache.log4j.Logger;//导入log4j包
+public class Compute {
+ // 声明数组
+ private int[] num = new int[2];
+ // 封装属性
+ public int[] getNum() {
+  return num;
+ }
+ public void setNum(int[] num) {
+  this.num = num;
+ }
+ 
+ public static void main(String[] args) {
+  Scanner input = new Scanner(System.in);
+  Compute compute = new Compute();
+  Logger log = Logger.getLogger(Compute.class);
+  int result = 0;
+  int[] num = compute.getNum();
+  String answer = null;
+  try {
+   System.out.println("请输入第一个数字：");
+   num[0] = input.nextInt();
+   System.out.println("请输入第二个数字:");
+   num[1] = input.nextInt();
+   result = num[0] / num[1];
+   System.out.println("是否保存结果?(y/n)");
+   answer = input.next();
+   if (answer.equalsIgnoreCase("y")) {
+    num[2] = result;// 试图将计算结果保存到数组中
+   }
+  } catch (InputMismatchException e) {
+   System.out.println("用户输入数据类型错误！");
+   log.debug("用户输入数据类型错误！");
+  } catch (ArithmeticException ae) {
+   System.out.println("发生算术错误！" + ae.getMessage());
+   log.info("发生算术错误！" + ae.getMessage());
+  } catch (ArrayIndexOutOfBoundsException aee) {
+   System.out.println("数组发生越界！");
+   log.warn(aee);
+  } catch (Exception exception) {
+   System.out.println("程序发生异常，给您带来不便，请重新启动！");
+   log.error(exception);
+  } finally {
+   System.out.println(num[0] + "除以" + num[1] + "的计算结果为：" + result);
+  }
+ }
+}
+1.4.1日志分析:
+预记录一：用户输入的不是数字时，InputMismatchException捕获到异常，结束程序,输出提示：用户输入数据类型错误！
+log.debug("用户输入数据类型错误！"),记录错误信息:
+　　2009-09-28 11:36:23 com.t97.compute.Compute.main(Compute.java:46)  用户输入数据类型错误！
+预记录二: 用户输入的第二个数即除数为0时,ArithmeticException捕获到异常，结束程序，输出提示：发生算术错误！/ by zero
+ log.info("发生算术错误！" + ae.getMessage()),记录错误信息:
+　　2009-09-28 11:35:00 com.t97.compute.Compute.main(Compute.java:49) java.lang.ArithmeticException: / by zero
+预 记录三:程序提示："是否保存结果?(y/n)",如果输入"Y"后，ArrayIndexOutOfBoundsException捕获到异常，结束程 序，输出提示：数组发生越界因为数据长度为2,而程序试图"num[2] = result;// 试图将计算结果保存到数组中",发生越界！
+          log.warn(aee), 记录错误信息：
+　　2009-09-28 11:37:41 com.t97.compute.Compute.main(Compute.java:52) java.lang.ArrayIndexOutOfBoundsException: 2
+预记录四:未知错误,Exception超类捕获到异常，结束程序，输出提示"程序发生异常，给您带来不便，请重新启动！"
+          log.error(exception),记录错误信息:(未知的……)

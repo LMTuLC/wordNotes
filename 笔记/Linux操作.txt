@@ -1,0 +1,49 @@
+Linux下创建数据库
+
+将不要的文件删除:$ git commit -a -m "submit"
+ 
+git下进入本地磁盘:如$ cd d:  注:进入d盘!
+
+拷贝远程服务器的文件到本地：scp -r -P  端口号   用户名@IP地址:/usr/local/tomcat_airc/webapps/文件名        /tmp/kyj/
+拷贝本地文件到远程服务器：scp -r    /tmp/kyj/sys.war         用户名@IP地址:/usr/local/tomcat_airc/webapps/
+
+在命令窗口输入:
+ 
+[oracle@cap4jtest5] $ sqlplus / as sysdba
+	
+创建tablespace
+SQL> create tablespace users datafile '/home/oracle/userstest.ora' size 50M autoextend on next 10M maxsize 100M;
+(注意:window下是双引号,Linux下是单引号)
+
+创建用户
+SQL>create user gshl identified by gshl123 account unlock;
+
+为用户授权
+SQL>grant create user , drop user,alter user,create any view,drop any view,exp_full_database,imp_full_database,
+	dba,connect,resource,create session to gshl;
+
+为用户指定默认空间
+SQL>alter user gshl default tablespace gshl;
+
+退出sqlplus
+SQL>exit
+
+删除表空间
+SQL>drop tablespace nanchang including contents and datafiles;
+
+到用户下
+[oracle@cap4jtest5] $ imp gshl(用户名)/gshl123(密码) 
+			fromuser=gshl(dmp从这个用户导出来) 
+			touser=gshl(将dmp文件数据导入到这个用户) 
+			file=/sy/gshl.dmp;在Linux下不加引号
+完整:imp gshl/gshl123 fromuser=gshl touser=gshl file=/sy/gshl.dmp;  注意:cmd最后不加;号
+
+完成! 
+----------------------------------------------------------------------
+20180326
+oracle怎么查询一个指定的表空间的所有表:
+
+sql：Select Table_Name, Tablespace_Name From Dba_Tables   Where Tablespace_Name = '表空间名字'; 
+
+解释：通过管理员权限登陆后，查看“Dba_Tables   ”表中的字段信息即可完成查询表名操作。备注：表空间名字必须大写。
+

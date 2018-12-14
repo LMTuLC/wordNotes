@@ -1,0 +1,31 @@
+						$.ajax({  
+	        					type : "POST",  
+	        					url : url,  
+	        					data : null,  
+	        					dataType : "json",  
+	        					beforeSend: function(){
+	        						//$J.get("updateButton").setEnabled(false);
+	        						 $("<div class=\"datagrid-mask\"></div>").css({display:"block",width:"100%",height:$(window).height()}).appendTo("body");   
+	        					     $("<div class=\"datagrid-mask-msg\"></div>").html("正在处理，请稍候。。。").appendTo("body").css({display:"block",left:($(document.body).outerWidth(true) - 190) / 2,top:($(window).height() - 45) / 2});   
+	        					},
+	        					    success: function (data) {
+	        					    	 $(".datagrid-mask").remove();   
+	        					         $(".datagrid-mask-msg").remove();
+	        					        if (data == "OK") {
+	        					        	$J.cap4jInfo("更新成功！");    
+		        							search();
+	        					        }else{
+		        							$J.cap4jError("更新失败！");    
+		        							search();
+		        						}
+	        					    },
+	        					    complete: function () {
+	        					    	 $(".datagrid-mask").remove();   
+	        					         $(".datagrid-mask-msg").remove();
+	        					    	//$J.get("updateButton").setEnabled(true);
+	        					    },
+	        					    error: function (data) {
+	        					    	$J.cap4jError("更新失败！"); 
+		        						search();
+	        					    }
+	        				});

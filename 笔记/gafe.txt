@@ -1,0 +1,33 @@
+84用户下:xxpt
+
+gafe log:/gafe/log
+
+ftp 168.40.63.84:
+ftp>dir
+ftp>cd file
+ftp>cd bill
+ftp>dir
+
+
+生成的gafe文件:localFilePath=/home/weblogic/dykcib/ftpfile
+在gafe上的文件目录:gafeFilePath=gafe/file/bill
+
+
+
+-----------------------------
+
+gafe配置信息
+
+#FTP Server Param
+ftp.ftpHostname=168.40.63.84
+ftp.ftpPort=21
+ftp.ftpUsername=gafe
+ftp.ftpPassword=gafe
+
+#Gafe Server Param
+gafe.localFilePath=/home/weblogic/dykcib/ftpfile
+gafe.gafeFilePath=file/bill
+gafe.encode=GBK
+gafe.gafeHost=168.40.63.84
+gafe.gafePort=13319
+gafe.gafeTimeout=45000

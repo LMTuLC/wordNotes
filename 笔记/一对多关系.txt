@@ -1,0 +1,30 @@
+联系人对于客户是多对一;
+客户对于联系人是一对多
+一个客户有多个联系人,一个联系人只有一个客户;
+
+学生对于成绩是一对多;
+成绩对于学生是多对一;
+学生有多个成绩,成绩只能对应一个学生;
+
+爸爸可以有多个亲生儿子,
+亲生儿子只有一个亲爸爸;
+爸爸可以有多个儿子,儿子只能有一个爸爸;
+
+多对一:
+	儿子,多的一方:
+		<many-to-one name="father" column="f_s_id" class="Father"  ></many-to-one>
+	name:多方联系人的pojo类中对应的一方的属性;
+	column:外键名:对应多的一方主键,一的一方外键
+	class:多的一方pojo类的限定名
+
+一对多:
+	爸爸,一的一方:
+		<set name="sons">
+			<key column="f_s_id" ></key>
+			<one-to-many class="Son"/>
+		</set>
+	name:Father类中对应的set集合名
+	column:外键名:对应多的一方主键,一的一方外键
+	class:一的一方pojo类的限定名
+
+注意:外键一定要一样

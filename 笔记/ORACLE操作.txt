@@ -1,0 +1,286 @@
+lsnrctl start开启监听
+
+lsnrctl stop停止监听
+
+net start oracleserviceoracle开启oracle服务
+
+net stop oracleserviceoracle停止oracle服务
+
+启动本地数据库:
+
+1.启动服务-- 进入cmd 输入net start oracleserviceorcl  注:orcl是实例名
+
+2.启动监听器-- 输入lsnrctl start;停止监听器-- 输入lsnrctl stop;
+
+(可以不查看)3.查看监听状态-- 输入lsnrctl status;
+
+4.进入sqlplus-- 输入sqlplus / as sysdba;
+
+5.启动数据库-- sql>startup  注:本地电脑不用 
+
+6.测试连接某个数据库-- sql>conn dykcib/dykcib;
+
+7.关闭数据库-- sql>shutdown;
+
+成功!
+
+
+-----------------------------------------------------------------------------------------------------
+
+
+1.如果已存在表空间,先删掉
+SQL> drop tablespace "dykcib" including contents and datafiles;
+	
+2.创建表空间
+注意:如果表的数据过大,超出该文件的最大值,导出dmp文件时会报错,解决办法是修改该文件的大小;
+SQL> create tablespace "dykcib" datafile '文件存放路径/dykcib.ora' size 50M autoextend on next 10M maxsize 100M;
+
+3.创建用户
+SQL>create user dykcib identified by dykcib account unlock;
+注意:12版本写法,需要在用户名前加C##或者c##
+SQL>create user C##dykcib identified by dykcib account unlock;
+
+4.为用户授权
+SQL>grant create user , drop user,alter user,create any view,drop any view,exp_full_database,imp_full_database,dba,connect,resource,create session to dykcib;
+
+5.为用户指定默认表空间
+SQL>alter user dykcib default tablespace "dykcib";
+注意:12版本写法
+alter user C##dykcib default tablespace "dykcib";
+
+6.在cmd或者oracle用户下
+
+导入:
+imp dykcib/dykcib@168.40.5.44:1521/orcl fromuser=dykcib touser=dykcib file=D:\download\dykcib.dmp
+
+如果不需要全部导入,只需要导入指定的表:
+imp dykcib/dykcib@168.40.5.44:1521/orcl fromuser=dykcib touser=dykcib table=(T_ZYDJBXX,XXXX,XXX) file=D:\download\dykcib.dmp
+
+
+导出:
+exp dykcib/dykcib@168.40.5.44:1521/orcl file=D:\download\dykcib.dmp
+
+Exp导出指定表的全部数据:
+exp dykcib/dykcib@168.40.5.44:1521/orcl TABLES=(TB_USER,NEWMAKT,TEST_ORG,TEST_SUBJECT,TEST_USER) file=D:\dykcib.dmp
+
+Exp导出指定表中符合条件的数据:
+exp dykcib/dykcib@168.40.5.44:1521/orcl TABLES=(JSEBOTEST,NEWMAKT,TEST_ORG,TEST_SUBJECT,TEST_USER) file=D:\dykcib.dmp QUERY=\"WHERE rownum<11\"
+
+Exp命令常用参数:
+
+full=y
+全库导出
+
+owner=（user1，user2）
+导出指定的用户，如user1、user2
+
+compress=y
+设置待导出的表占用空间为实际尺寸（即除去高端水印）
+-----------------------------------------------------------------------------------------------------
+
+imp导入dmp文件时
+
+出现无法创建initial区,
+或者如果在导入数据时表空间就占满的话，会报错 
+“无法分配超出 n 的 MINEXTENTS”
+
+解决办法
+1.找出该表空间的数据文件路径
+select tablespace_name,file_name,autoextensible from dba_data_files;
+
+2.查看是否自动延伸,如果为NO
+alter database datafile 'D:\ORACLE\WORKSPACE\GSHL.ORA' autoextend on; 
+
+3.修改大小
+alter database datafile 'D:\ORACLE\WORKSPACE\GSHL.ORA' resize 1024M;
+
+
+exp导出dmp文件时
+
+出现  EXP-00003: 未找到 段(0,0)的存储定义
+这个问题出现是在重新安装了一下 oracle 客户端后
+
+参考解决方法：
+select 'alter table'||table_name||'allocate extent;' from 
+user_tables where num_rows=0 or num_rows is null;
+将这条语句执行出的的信息都执行一遍试试
+
+alter system set  deferred_segment_creation = false;
+把空表导出参数修改下
+
+-----------------------------------------------------------------------------------------------------
+
+建序列
+CREATE SEQUENCE sequence_emp  --序列名
+INCREMENT BY 1   -- 每次加几个  
+START WITH 1       -- 从1开始计数  
+NOMAXVALUE        -- 不设置最大值  
+NOCYCLE               -- 一直累加，不循环  
+CACHE 10;
+
+-----------------------------------------------------------------------------------------------------
+
+Oracle表字段的增加、删除、修改和重命名
+本文主要是关于Oracle数据库表中字段的增加、删除、修改和重命名的操作。
+
+增加字段语法：alter table tablename add (column datatype [default value][null/not null],….);
+
+说明：alter table 表名 add (字段名 字段类型 默认值 是否为空);
+
+   例：alter table sf_users add (HeadPIC blob);
+
+   例：alter table sf_users add (userName varchar2(30) default '空' not null);
+
+ 
+
+修改字段的语法：alter table tablename modify (column datatype [default value][null/not null],….); 
+
+说明：alter table 表名 modify (字段名 字段类型 默认值 是否为空);
+
+   例：alter table sf_InvoiceApply modify (BILLCODE number(4));
+
+ 
+
+删除字段的语法：alter table tablename drop (column);
+
+说明：alter table 表名 drop column 字段名;
+
+   例：alter table sf_users drop column HeadPIC;
+
+ 
+
+字段的重命名：
+
+说明：alter table 表名 rename  column  列名 to 新列名   （其中：column是关键字）
+
+   例：alter table sf_InvoiceApply rename column PIC to NEWPIC;
+
+ 
+
+表的重命名：
+
+说明：alter table 表名 rename to  新表名
+
+   例：alter table sf_InvoiceApply rename to  sf_New_InvoiceApply;
+
+-----------------------------------------------------------------------------------------------------
+
+恢复删除数据:
+
+1.样例表test_171205 
+
+2.delete test_171205 where test_id = '001'; --误删除了其中一条数据
+
+3.select sql_text,first_load_time,last_load_time from V$SQL where sql_text like '%delete test_171205%';--查看自己执行过的sql和最后执行时间，这里查到最后执行时间是2017-12-05 21:20:10；
+
+4.create table test_171205_tmp as select * from test_171205 as of timestamp to_timestamp('2017-12-05 21:20:11','yyyy-mm-dd hh24:mi:ss');--创建一个临时表，用来保存2017-12-05 21:20:10分之前的数据
+
+5.drop table test_171205;--删除原来的表
+
+6.alter table test_171205_tmp rename to test_171205;--更改临时表的表名
+
+
+-----------------------------------------------------------------------------------------------------
+
+数据库性能优化主要一下几个方面：
+　　1、sql语句的执行计划是否正常
+　　2、减少应用和数据库的交互次数、同一个sql语句的执行次数
+　　3、数据库实体的碎片的整理（特别是对某些表经常进行insert和delete动作，尤其注意，索引字段为系列字段、自增长字段、时间字段，对于业务比较频繁的系统，最好一个月重建一次）
+　　4、减少表之间的关联，特别对于批量数据处理，尽量单表查询数据，统一在内存中进行逻辑处理，减少数据库压力（java处理批量数据不可取，尽量用c或者c++ 进行处理，效率大大提升）
+　　5、对访问频繁的数据，充分利用数据库cache和应用的缓存
+　　6、数据量比较大的，在设计过程中，为了减少其他表的关联，增加一些冗余字段，提高查询性能 
+
+
+-----------------------------------------------------------------------------------------------------
+
+同时删除多张指定表的数据:
+
+declare
+  cursor c_t is (select table_name from user_tables where table_name like 'TB_%');--声明一个游标
+  table_name user_tables.table_name%type;--声明一个表名的变量
+begin 
+  open c_t;
+  loop--循环
+       fetch c_t into table_name;
+       exit when c_t%notfound;
+       execute immediate 'delete from ' || table_name;--动态sql删除
+  end loop;
+  close c_t;
+end;
+
+-----------------------------------------------------------------------------------------------------
+查看,修改数据库编码,如果原来的数据库与才安装的数据库编码不一致,会导致dmp文件等数据导入出错,
+如:
+原来的数据库的大小为varchar(32),数据存储没有问题,而现在导入原来的数据库dmp文件,则报实际值(36)大于数据库定义值(32);
+导致数据丢失;
+两种编码:ZHS16GBK(目前用的,应该是一个字占用两个字符),AL32UTF8(一个字占用三个字符);
+
+A.首先查看oracle数据库的编码:
+
+SQL> select * from nls_database_parameters where parameter ='NLS_CHARACTERSET';
+
+PARAMETER
+--------------------
+VALUE
+--------------------
+NLS_CHARACTERSET
+AL32UTF8
+
+这其来源于props$，这是表示数据库的字符集。
+
+oracle客户端编码
+SQL> select * from nls_instance_parameters where parameter='NLS_LANGUAGE';
+
+PARAMETER
+--------------------
+VALUE
+--------------------
+NLS_LANGUAGE
+SIMPLIFIED CHINESE
+
+其来源于v$parameter，表示客户端的字符集的设置，可能是参数文件，环境变量或者是注册表会话字符集环境
+
+select * from nls_session_parameters，其来源于v$nls_parameters，表示会话自己的设置，
+可能是会话的环境变量或者是alter session完成，如果会话没有特殊的设置，将与nls_instance_parameters一致。
+
+===============================
+
+B.再来说一下怎么修改oracle的字符集:
+
+目前我的数据库环境的字符集是AL32UTF8，那么把它改成ZHS16GBK
+
+1.首先以sysdba的身份登录上去 
+cmd:conn /as sysdba
+
+2.关闭数据库
+SQL>shutdown immediate;
+
+3.以mount打来数据库，
+SQL>startup mount
+
+4.设置session
+
+SQL>ALTER SYSTEM ENABLE RESTRICTED SESSION;
+SQL> ALTER SYSTEM SET JOB_QUEUE_PROCESSES=0;
+SQL> ALTER SYSTEM SET AQ_TM_PROCESSES=0;
+
+5.启动数据库
+
+SQL>alter database open;
+
+6.修改字符集
+
+ALTER DATABASE CHARACTER SET ZHS16GBK;
+
+这会可能会报错，提示我们的字符集：新字符集必须为旧字符集的超集，这时我们可以跳过超集的检查做更改：
+
+ALTER DATABASE character set INTERNAL_USE ZHS16GBK;
+
+这条语句就可以了，TERNAL_USE提供的帮助就会使oracle绕过了子集与超集的验证，这条语句和上面的语句内部操作时完全相同的。
+
+7.关闭，重新启动
+
+SQL>shutdown immediate;
+SQL> startup
+
+当然字符集最好不要轻易修改，因为这会对数据库的数据有直接的影响，如果是生产环境的话，可能会造成不可估计得损失。
