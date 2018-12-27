@@ -1,4 +1,4 @@
-This file used to generate gitbook catalogue. 
+﻿This file used to generate gitbook catalogue. 
 
 # Summary
 
@@ -6,6 +6,7 @@ This file used to generate gitbook catalogue.
   * [剑指 Offer 题解](/notes/剑指 offer 题解.md) 
   * [Leetcode 题解](/notes/Leetcode 题解.md)
   * [算法](/notes/算法.md)
+  * [李超](/notes/MdTest.md)
 * 操作系统
   * [计算机操作系统](/notes/计算机操作系统.md)
   * [Linux](/notes/Linux.md)
