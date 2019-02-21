@@ -47,7 +47,14 @@ SQL>grant create user , drop user,alter user,create any view,drop any view,exp_f
 SQL>alter user dykcib default tablespace "dykcib";
 注意:12版本写法
 alter user C##dykcib default tablespace "dykcib";
-
+------------------------------------------------------------------------------------------------
+注意：12c增加了可插接数据库的概念，即PDB，允许一个数据库容器（CDB）承载多个可插拔数据库（PDB）。
+1.alter session set container = orclpdb;
+2.create tablespace "dykcib" datafile 'D:\Oracle\orafiles\dykcib.ora' size 50M autoextend on next 10M maxsize 100M;
+3.create user C##dykcib identified by dykcib account unlock;
+4.grant create user , drop user,alter user,create any view,drop any view,exp_full_database,imp_full_database,dba,connect,resource,create session to C##dykcib;
+5.alter user C##dykcib default tablespace "dykcib";
+------------------------------------------------------------------------------------------------
 6.在cmd或者oracle用户下
 
 导入:
