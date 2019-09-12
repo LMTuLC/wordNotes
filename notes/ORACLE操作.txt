@@ -257,13 +257,13 @@ B.再来说一下怎么修改oracle的字符集:
 目前我的数据库环境的字符集是AL32UTF8，那么把它改成ZHS16GBK
 
 1.首先以sysdba的身份登录上去 
-cmd:conn /as sysdba
+cmd:conn /as sysdba; 或者sqlplus / as sysdba;
 
 2.关闭数据库
 SQL>shutdown immediate;
 
 3.以mount打来数据库，
-SQL>startup mount
+SQL>startup mount；
 
 4.设置session
 
@@ -288,6 +288,6 @@ ALTER DATABASE character set INTERNAL_USE ZHS16GBK;
 7.关闭，重新启动
 
 SQL>shutdown immediate;
-SQL> startup
+SQL> startup;
 
 当然字符集最好不要轻易修改，因为这会对数据库的数据有直接的影响，如果是生产环境的话，可能会造成不可估计得损失。
