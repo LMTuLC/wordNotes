@@ -15,3 +15,20 @@ on USER_INFO for each row
  begin
         update USER_INFO@uatData t set t.mobilephone=:new.mobilephone where t.mobilephone=:old.mobilephone;
  end;
+
+
+判断写法
+create or replace trigger userUpdate
+after  update 
+on USER_INFO for each row
+Declare
+   judgeParma VARCHAR2(11);
+ begin
+        select a.mobilephone into judgeParma from  USER_INFO@uatData a where a.idno = :old.idno;
+        if judgeParma != :new.mobilephone then
+            update USER_INFO@uatData t set t.mobilephone=:new.mobilephone where t.mobilephone=:old.mobilephone;
+            
+        else
+          update USER_INFO@uatData t set t.gender='男' where t.idno=:old.idno;
+        end if;
+ end;
