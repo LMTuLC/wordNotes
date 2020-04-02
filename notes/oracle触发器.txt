@@ -1,0 +1,17 @@
+--查看是否有权限  true有
+select * from v$option where PARAMETER='Advanced replication';
+或者
+ select * from user_sys_privs where privilege like upper('%DATABASE LINK%') AND USERNAME='suiningdb';
+没有就赋予权限
+grant create public database link to suiningdb;
+//建立dblink
+create database link uatData connect to suiningdb identified by suiningdb using '160.161.12.125:1521/ecif';
+//查看是否建立成功
+SELECT * FROM USER_INFO@uatData;
+//创建触发器
+create or replace trigger myTest
+after  update 
+on USER_INFO for each row
+ begin
+        update USER_INFO@uatData t set t.mobilephone=:new.mobilephone where t.mobilephone=:old.mobilephone;
+ end;
